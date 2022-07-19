@@ -1,71 +1,76 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using ServiceLib;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 
-namespace FunctionDemoApp
+namespace FunctionDemoApp;
+
+
+public class AzureFunctions
 {
-	public class AzureFunctions
+	private readonly IDemoService _service;
+	private readonly ILogger<AzureFunctions> _logger;
+
+
+	public AzureFunctions(IDemoService service, ILogger<AzureFunctions> logger)
 	{
-		private readonly IDemoService _service;
+		_service = service;
+		_logger = logger;
+	}
 
 
-		public AzureFunctions(IDemoService service)
+	[Function("GetStatus")]
+	public async Task<HttpResponseData> GetStatusAsync(
+		 [HttpTrigger(AuthorizationLevel.Function, "get", Route = "status")] HttpRequestData request)
+	{
+		_logger.LogInformation("C# HTTP trigger function processed a request.");
+
+		await Task.Delay(100);
+
+		HttpResponseData response = request.CreateResponse(HttpStatusCode.OK);
+		await response.WriteAsJsonAsync(new { status = "It is Working!" });
+
+		return response;
+	}
+
+
+	[Function("SendMessage")]
+	public async Task<HttpResponseData> SendMessageAsync(
+		[HttpTrigger(AuthorizationLevel.Function, "post", Route = "message")] HttpRequestData request)
+	{
+		_logger.LogInformation("SendMessage triggered via HTTP");
+
+		string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+		Dictionary<string, string>? data = JsonSerializer.Deserialize<Dictionary<string, string>>(requestBody);
+		string? message = null;
+		data?.TryGetValue("message", out message);
+
+		if (string.IsNullOrWhiteSpace(message) == false)
 		{
-			_service = service;
-		}
-
-		[FunctionName("GetStatus")]
-		public async Task<IActionResult> GetStatusAsync(
-			 [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request,
-			 ILogger logger)
-		{
-			logger.LogInformation("C# HTTP trigger function processed a request.");
-
-			await Task.Delay(100);
-
-			return new OkObjectResult("{ \"status\": \"It's Working\" }");
-		}
-
-
-		[FunctionName("SendMessage")]
-		public async Task<IActionResult> SendMessageAsync(
-			[HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request,
-			ILogger logger)
-		{
-			logger.LogInformation("SendMessage triggered via HTTP");
-
-			string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-			Dictionary<string, string> data = JsonSerializer.Deserialize<Dictionary<string, string>>(requestBody);
-			data.TryGetValue("message", out string? message);
-
-			if (string.IsNullOrWhiteSpace(message) == false)
-			{
-				logger.LogInformation("Function received message '{Message}' for processing", $"{message}");
-				await _service.ProcessMessageAsync(message);
-			}
-			else
-			{
-				logger.LogWarning("No 'message' property was found.");
-				return new BadRequestResult();
-			}
-
-			return new NoContentResult();
-		}
-
-
-		[FunctionName("ProcessQueueMessage")]
-		public async Task ProcessMessageAsync([QueueTrigger("%QueueName%")] string message, ILogger logger)
-		{
-			logger.LogInformation("Processing message from message queue");
+			_logger.LogInformation("Function received message '{Message}' for processing", $"{message}");
 			await _service.ProcessMessageAsync(message);
 		}
+		else
+		{
+			_logger.LogWarning("No 'message' property was found.");
+			return request.CreateResponse(HttpStatusCode.BadRequest);
+		}
+
+		return request.CreateResponse(HttpStatusCode.NoContent);
+	}
+
+
+	[Function("ProcessQueueMessage")]
+	public async Task ProcessMessageAsync([QueueTrigger("%QueueName%")] string message)
+	{
+		_logger.LogInformation("Processing message from message queue");
+		await _service.ProcessMessageAsync(message);
 	}
 }

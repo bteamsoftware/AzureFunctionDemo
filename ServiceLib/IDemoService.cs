@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
 
-namespace ServiceLib
+namespace ServiceLib;
+
+public interface IDemoService
 {
-	public interface IDemoService
-	{
-		Task ProcessMessageAsync(string message);
-	}
+	Task ProcessMessageAsync(string message);
 }
