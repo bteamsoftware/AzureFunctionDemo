@@ -10,17 +10,16 @@ necessary to create an advanced application. Some of the features of the demo in
 - IOptions based configuration
 
 ## Getting Started
-1. Install Visual Studio 2019
+1. Install Visual Studio 2022
 2. Add the Azure development workload to your Visual Studo installation
 3. Clone the repository
 4. Create the local.settings.json file
 5. Add custom log categories to host.json file
 6. Create the storage queue
-7. Execute the Azure Functions
+7. Execute the Azure Functions Application
 
 ### Visual Studio Installation
-The code is developed using Visual Studio 2019. Visual Studio 2022 is expected to be binary compatible, therefore,
-I expect the code to work properly in 2022. VS Code may work, however, I prefer to develop in Visual Studio.
+The code is developed using Visual Studio 2022. VS Code may work, however, I prefer to develop in Visual Studio.
 If someone who prefers VS Code messages me I will update the README with their experience.
 
 ### Visual Studio Work Loads
@@ -38,7 +37,7 @@ file in the root of the FunctionDemoApp called local.settings.json with the foll
 	"IsEncrypted": false,
 	"Values": {
 		"AzureWebJobsStorage": "UseDevelopmentStorage=true",
-		"FUNCTIONS_WORKER_RUNTIME": "dotnet",
+		"FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
 		"Service:Url": "www.contoso.com",
 		"Service:UseHttps": true,
 		"QueueName": "custom-messages"
@@ -71,7 +70,7 @@ log entries from log categories created by the DI container. Currently, this is 
 I recommend installing [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer)
 on your workstation. It is the simpliest tool for creating the queue.
  
-It is easiest to run the application to get the Storage Emulator running. The first time the application is run on your workstation may take several minutes to launch.
+Visual Studio 2022 will automatically start the Storage Emulator running. The first time the application is run on your workstation may take several minutes to launch.
 Visual Studio will try to install the Storage Emulator if it's not already installed on your workstation.
 
 Once the application is running, right-click on Queues under Local & Attached => Storage Accounts => (Emulator -Default Ports) (Key).
@@ -83,12 +82,12 @@ There are two HTTP Trigger functions and one Queue Trigger function. Please note
 
 To execute the Get Status HTTP Trigger function, send a HTTP GET requrest to the following endpoint
 ```
-http://localhost:7071/api/GetStatus
+http://localhost:7071/api/status
 ```
 
 To execute the Send Message HTTP Trigger function, send a HTTP POST request to the following endpoint
 ```
-http://localhost:7071/api/SendMessage
+http://localhost:7071/api/message
 ```
 with the following JSON request body
 ``` json
