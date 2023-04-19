@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using ServiceLib;
 
@@ -12,6 +13,7 @@ IHost host = new HostBuilder()
 	{
 		services.AddCustomServices();
 	})
+	.ConfigureOpenApi()
 	.Build();
 
 await host.RunAsync();
