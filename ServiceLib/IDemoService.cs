@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿namespace ServiceLib;
 
-
-namespace ServiceLib;
 
 public interface IDemoService
 {
