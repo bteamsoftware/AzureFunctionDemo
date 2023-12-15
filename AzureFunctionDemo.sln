@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionDemoApp", "FunctionDemoApp\FunctionDemoApp.csproj", "{AA899CEF-085B-4DCE-A7A1-9E607C01D6B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionDemoApp", "FunctionDemoApp\FunctionDemoApp.csproj", "{AA899CEF-085B-4DCE-A7A1-9E607C01D6B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLib", "ServiceLib\ServiceLib.csproj", "{D3FCE0EF-7199-4FC9-8DFC-F0060270772B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLib", "ServiceLib\ServiceLib.csproj", "{D3FCE0EF-7199-4FC9-8DFC-F0060270772B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
